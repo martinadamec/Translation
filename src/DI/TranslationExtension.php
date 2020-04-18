@@ -79,6 +79,7 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 	 */
 	public $defaults = [
 		'whitelist' => NULL, // array('cs', 'en'),
+        'prefixWhitelist' => [], // array('ublaboo_datagrid'),
 		'default' => 'en',
 		'logging' => NULL, //  TRUE for psr/log, or string for kdyby/monolog channel
 		// 'fallback' => array('en_US', 'en'), // using custom merge strategy becase Nette's config merger appends lists of values
@@ -102,7 +103,8 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 	{
 		return Expect::structure([
 			'whitelist' => Expect::anyOf(Expect::arrayOf('string'), NULL),
-			'default' => Expect::string('en'),
+            'prefixWhitelist' => Expect::anyOf(Expect::arrayOf('string'), []),
+            'default' => Expect::string('en'),
 			'logging' => Expect::anyOf(Expect::string(), Expect::bool()),
 			'fallback' => Expect::arrayOf('string')->default(['en_US']),
 			'dirs' => Expect::arrayOf('string')->default(['%appDir%/lang', '%appDir%/locale']),
@@ -135,7 +137,12 @@ class TranslationExtension extends \Nette\DI\CompilerExtension
 		Validators::assertField($config, 'fallback', 'list');
 		$translator->addSetup('setFallbackLocales', [$config['fallback']]);
 
-		$catalogueCompiler = $builder->addDefinition($this->prefix('catalogueCompiler'))
+        if ($config['prefixWhitelist'] ) {
+            $translator->addSetup('setPrefixWhitelist', [$config['prefixWhitelist']]);
+        }
+
+
+        $catalogueCompiler = $builder->addDefinition($this->prefix('catalogueCompiler'))
 			->setFactory(CatalogueCompiler::class, self::filterArgs($config['cache']));
 
 		if ($config['debugger'] && interface_exists(IBarPanel::class)) {

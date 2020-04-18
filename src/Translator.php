@@ -74,6 +74,9 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	private $formatter;
 
+    /** @var array */
+    protected $prefixWhitelist = [];
+
 	/**
 	 * @param \Kdyby\Translation\IUserLocaleResolver $localeResolver
 	 * @param \Symfony\Component\Translation\Formatter\MessageFormatterInterface $formatter
@@ -288,6 +291,28 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	{
 		$this->localeWhitelist = self::buildWhitelistRegexp($whitelist);
 	}
+
+
+    /**
+     * @param array $prefixWhiteList
+     */
+    public function setPrefixWhitelist($prefixWhiteList)
+    {
+        if ( is_array($prefixWhiteList) ) {
+            array_push($this->prefixWhitelist, ...$prefixWhiteList);
+        }
+        else {
+            $this->prefixWhitelist[] = $prefixWhiteList;
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getPrefixWhitelist()
+    {
+        return $this->prefixWhitelist;
+    }
 
 	/**
 	 * {@inheritdoc}

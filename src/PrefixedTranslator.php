@@ -72,6 +72,15 @@ class PrefixedTranslator implements \Kdyby\Translation\ITranslator
 			$translationString = Strings::substring($translationString, 2);
 		}
 
+		// Prefix whitelist
+        $prefixWhitelist = $this->translator->getPrefixWhitelist();
+        foreach ($prefixWhitelist as $_prefix) {
+            if ( Strings::startsWith((string) $message, $_prefix) ) {
+                $prefix = NULL;
+                break;
+            }
+        }
+
 		if ($message instanceof Phrase) {
 			return $this->translator->translate(new Phrase($prefix . $translationString, $message->count, $message->parameters, $message->domain, $message->locale));
 		}
