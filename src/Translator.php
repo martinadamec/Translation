@@ -100,7 +100,6 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 		$this->translationsLoader = $loader;
 
 		parent::__construct('', $formatter);
-		$this->setLocale(NULL);
 	}
 
 	/**
@@ -375,7 +374,7 @@ class Translator extends \Symfony\Component\Translation\Translator implements \K
 	 */
 	public function getLocale()
 	{
-		if (parent::getLocale() === NULL) {
+		if (empty(parent::getLocale())) {
 			$this->setLocale($this->localeResolver->resolve($this));
 		}
 
